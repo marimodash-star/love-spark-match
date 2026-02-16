@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FloatingHeart, SparkleHeartIcon, getCatImage } from "./HeartIcons";
 
 interface LevelCompleteProps {
   level: number;
@@ -21,45 +22,40 @@ const LevelComplete: React.FC<LevelCompleteProps> = ({ level, message, onNext, i
   const [confetti, setConfetti] = useState<{ id: number; x: number; delay: number; color: string; rotate: number }[]>([]);
 
   useEffect(() => {
-    const h = Array.from({ length: 20 }, (_, i) => ({
+    setHearts(Array.from({ length: 20 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       delay: Math.random() * 2,
       color: HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)],
       size: 12 + Math.random() * 20,
-    }));
-    setHearts(h);
-
-    const c = Array.from({ length: 30 }, (_, i) => ({
+    })));
+    setConfetti(Array.from({ length: 30 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       delay: Math.random() * 1.5,
       color: HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)],
       rotate: Math.random() * 360,
-    }));
-    setConfetti(c);
+    })));
   }, []);
+
+  const showCat = level >= 3;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm">
-      {/* Hearts */}
       {hearts.map((h) => (
-        <div
+        <FloatingHeart
           key={h.id}
+          color={h.color}
+          size={h.size}
           className="absolute animate-float-heart pointer-events-none"
           style={{
             left: `${h.x}%`,
             bottom: "0",
             animationDelay: `${h.delay}s`,
-            fontSize: h.size,
-            color: h.color,
           }}
-        >
-          ❤️
-        </div>
+        />
       ))}
 
-      {/* Confetti */}
       {confetti.map((c) => (
         <div
           key={`c-${c.id}`}
@@ -77,16 +73,33 @@ const LevelComplete: React.FC<LevelCompleteProps> = ({ level, message, onNext, i
       ))}
 
       <div className="animate-bounce-in bg-card rounded-3xl p-8 mx-4 max-w-sm text-center shadow-2xl border-2 border-primary/30 relative z-10">
-        <div className="text-5xl mb-4">🎉</div>
+        <SparkleHeartIcon className="mx-auto mb-4" size={48} />
         <h2 className="font-display text-2xl text-primary mb-4">Уровень {level} пройден!</h2>
-        <p className="text-lg text-foreground leading-relaxed mb-6 font-semibold">
-          {message}
-        </p>
+        
+        {showCat ? (
+          <img
+            src={getCatImage(level)}
+            alt="Милый котик"
+            className="w-48 h-48 object-contain mx-auto mb-4 rounded-2xl"
+          />
+        ) : (
+          <p className="text-lg text-foreground leading-relaxed mb-6 font-semibold">
+            {message}
+          </p>
+        )}
+
         <button
           onClick={onNext}
-          className="bg-gradient-to-r from-primary to-celebration text-primary-foreground font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:scale-105 active:scale-95 transition-transform"
+          className="bg-gradient-to-r from-primary to-celebration text-primary-foreground font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:scale-105 active:scale-95 transition-transform inline-flex items-center gap-2"
         >
-          {isLast ? "❤️ Начать влюбляться заново" : "Следующий уровень →"}
+          {isLast ? (
+            <>
+              <FloatingHeart color="currentColor" size={18} />
+              Начать влюбляться заново
+            </>
+          ) : (
+            "Следующий уровень →"
+          )}
         </button>
       </div>
     </div>
