@@ -4,7 +4,6 @@ import LoveBar from "@/components/LoveBar";
 import LevelComplete from "@/components/LevelComplete";
 import ValentineScreen from "@/components/ValentineScreen";
 import { useGameBoard } from "@/game/useGameBoard";
-import { SparkleHeartIcon } from "@/components/HeartIcons";
 
 const Index: React.FC = () => {
   const {
@@ -22,17 +21,19 @@ const Index: React.FC = () => {
     restartGame,
     swapping,
     invalidSwap,
+    hintCells,
+    boardShaking,
   } = useGameBoard();
 
   return (
-    <div className="flex flex-col min-h-screen bg-background items-center justify-start pt-4 pb-8 px-2 overflow-hidden">
-      <h1 className="font-display text-3xl text-primary mb-3 drop-shadow-sm inline-flex items-center gap-2">
-        Love Match <SparkleHeartIcon size={32} />
+    <div className="flex flex-col min-h-[100dvh] bg-background items-center justify-start pt-2 pb-4 px-2 overflow-hidden">
+      <h1 className="font-display text-2xl text-primary mb-2 drop-shadow-sm">
+        Love Match
       </h1>
 
       <LoveBar score={score} target={levelConfig.targetScore} level={currentLevel + 1} />
 
-      <div className="mt-3 flex-1 flex items-start justify-center">
+      <div className="mt-2 flex-1 flex items-start justify-center w-full">
         <GameBoard
           board={board}
           selected={selected}
@@ -41,13 +42,15 @@ const Index: React.FC = () => {
           swapping={swapping}
           invalidSwap={invalidSwap}
           animating={animating}
+          hintCells={hintCells}
+          boardShaking={boardShaking}
         />
       </div>
 
       {levelComplete && (
         <LevelComplete
           level={currentLevel + 1}
-          message={levelConfig.message || "Отлично! 💕"}
+          message={levelConfig.message || "Отлично!"}
           onNext={nextLevel}
           isLast={currentLevel >= 24}
         />
