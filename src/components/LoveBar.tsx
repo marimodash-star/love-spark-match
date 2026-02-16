@@ -1,4 +1,5 @@
 import React from "react";
+import { DoubleHeartIcon } from "./HeartIcons";
 
 interface LoveBarProps {
   score: number;
@@ -15,8 +16,8 @@ const LoveBar: React.FC<LoveBarProps> = ({ score, target, level }) => {
         <span className="text-sm font-bold text-foreground">
           Уровень {level}
         </span>
-        <span className="text-sm font-bold text-foreground">
-          {score} / {target} 💕
+        <span className="text-sm font-bold text-foreground inline-flex items-center gap-1">
+          {score} / {target} <DoubleHeartIcon size={16} />
         </span>
       </div>
       <div className="w-full h-5 rounded-full bg-love-bar-bg overflow-hidden border border-cell-border shadow-inner">
