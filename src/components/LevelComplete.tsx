@@ -38,7 +38,7 @@ const LevelComplete: React.FC<LevelCompleteProps> = ({ level, message, onNext, i
     })));
   }, []);
 
-  const showCat = level >= 3;
+  const showCat = true;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm">

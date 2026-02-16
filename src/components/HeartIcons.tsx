@@ -45,5 +45,5 @@ const CAT_IMAGES = [
 ];
 
 export const getCatImage = (level: number): string => {
-  return CAT_IMAGES[(level - 3) % CAT_IMAGES.length];
+  return CAT_IMAGES[(level - 1) % CAT_IMAGES.length];
 };

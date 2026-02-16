@@ -147,3 +147,32 @@
 .animate-hint-blink {
   animation: hint-blink 1.2s ease-in-out infinite;
 }
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.15); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.1); }
+  60% { transform: scale(1); }
+}
+
+@keyframes sparkle-float {
+  0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.animate-sparkle-1 {
+  animation: sparkle-float 2s ease-in-out infinite;
+}
+
+.animate-sparkle-2 {
+  animation: sparkle-float 2.5s ease-in-out infinite 0.3s;
+}
+
+.animate-sparkle-3 {
+  animation: sparkle-float 1.8s ease-in-out infinite 0.7s;
+}
