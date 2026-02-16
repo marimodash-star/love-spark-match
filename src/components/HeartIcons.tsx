@@ -38,11 +38,7 @@ export const FloatingHeart: React.FC<{ color?: string; size?: number; style?: Re
   </svg>
 );
 
-const CAT_IMAGES = [
-  "/images/cat-love-1.webp",
-  "/images/cat-love-2.webp",
-  "/images/cat-love-3.webp",
-];
+const CAT_IMAGES = Array.from({ length: 25 }, (_, i) => `/images/cat-${i + 1}.webp`);
 
 export const getCatImage = (level: number): string => {
   return CAT_IMAGES[(level - 1) % CAT_IMAGES.length];

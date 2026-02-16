@@ -5,11 +5,11 @@ import LevelComplete from "@/components/LevelComplete";
 import ValentineScreen from "@/components/ValentineScreen";
 import { useGameBoard } from "@/game/useGameBoard";
 
-const STARS = Array.from({ length: 20 }, (_, i) => ({
+const STARS = Array.from({ length: 10 }, (_, i) => ({
   id: i,
   top: `${Math.random() * 100}%`,
   left: `${Math.random() * 100}%`,
-  size: 4 + Math.random() * 8,
+  size: 20 + Math.random() * 30,
   delay: Math.random() * 4,
   duration: 2 + Math.random() * 3,
 }));
