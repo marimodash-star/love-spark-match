@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import { Cell } from "@/game/useGameBoard";
 import { PIECE_IMAGES } from "@/game/levels";
 
@@ -10,6 +10,8 @@ interface GameBoardProps {
   swapping: { from: [number, number]; to: [number, number] } | null;
   invalidSwap: [number, number] | null;
   animating: boolean;
+  hintCells: [number, number, number, number] | null;
+  boardShaking: boolean;
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({
@@ -20,11 +22,23 @@ const GameBoard: React.FC<GameBoardProps> = ({
   swapping,
   invalidSwap,
   animating,
+  hintCells,
+  boardShaking,
 }) => {
   const size = board.length;
   const touchStart = useRef<{ r: number; c: number; x: number; y: number } | null>(null);
 
-  const cellSize = Math.min(Math.floor((Math.min(window.innerWidth - 32, 500)) / size), 60);
+  // Mobile-first: optimize for 360-420px screens
+  // Available width = screen - padding(16px*2) - board padding(12px) = screen - 44px
+  // Gap between cells ~2px * (size-1)
+  const cellSize = useMemo(() => {
+    const screenW = Math.min(window.innerWidth, 500);
+    const available = screenW - 28; // 12px board padding + 16px page padding
+    const gapTotal = (size - 1) * 2;
+    const cs = Math.floor((available - gapTotal) / size);
+    // Clamp: min 30px (for 10x10 on small screen), max 54px
+    return Math.max(30, Math.min(cs, 54));
+  }, [size]);
 
   const handleTouchStart = useCallback((r: number, c: number, e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -38,7 +52,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
       const { r, c, x, y } = touchStart.current;
       const dx = touch.clientX - x;
       const dy = touch.clientY - y;
-      const minSwipe = 20;
+      const minSwipe = 15;
 
       if (Math.abs(dx) < minSwipe && Math.abs(dy) < minSwipe) {
         onCellClick(r, c);
@@ -61,50 +75,57 @@ const GameBoard: React.FC<GameBoardProps> = ({
     [onCellClick, onSwap, size]
   );
 
+  const isHinted = (r: number, c: number) => {
+    if (!hintCells) return false;
+    return (hintCells[0] === r && hintCells[1] === c) || (hintCells[2] === r && hintCells[3] === c);
+  };
+
   return (
     <div
-      className="relative rounded-2xl bg-game-bg p-1.5 shadow-lg border-2 border-cell-border"
-      style={{ width: cellSize * size + 12, margin: "0 auto" }}
+      className={`relative rounded-2xl bg-game-bg p-1.5 shadow-lg border-2 border-cell-border ${boardShaking ? "animate-shake" : ""}`}
+      style={{ width: cellSize * size + (size - 1) * 2 + 12, margin: "0 auto" }}
     >
       <div
-        className="grid gap-0.5"
+        className="grid"
         style={{
           gridTemplateColumns: `repeat(${size}, ${cellSize}px)`,
           gridTemplateRows: `repeat(${size}, ${cellSize}px)`,
+          gap: "2px",
         }}
       >
         {board.map((row, r) =>
           row.map((cell, c) => {
             const isSelected = selected && selected[0] === r && selected[1] === c;
             const isInvalid = invalidSwap && invalidSwap[0] === r && invalidSwap[1] === c;
+            const hinted = isHinted(r, c);
 
             let transform = "";
             if (swapping) {
               const { from, to } = swapping;
               if (from[0] === r && from[1] === c) {
-                const dr = (to[0] - from[0]) * cellSize;
-                const dc = (to[1] - from[1]) * cellSize;
+                const dr = (to[0] - from[0]) * (cellSize + 2);
+                const dc = (to[1] - from[1]) * (cellSize + 2);
                 transform = `translate(${dc}px, ${dr}px)`;
               } else if (to[0] === r && to[1] === c) {
-                const dr = (from[0] - to[0]) * cellSize;
-                const dc = (from[1] - to[1]) * cellSize;
+                const dr = (from[0] - to[0]) * (cellSize + 2);
+                const dc = (from[1] - to[1]) * (cellSize + 2);
                 transform = `translate(${dc}px, ${dr}px)`;
               }
             }
 
-            if (cell.isNew && cell.fallDistance > 0) {
-              // Already at position, animate from above
-            }
+            // Staggered cascade: delay based on row
+            const cascadeDelay = r * 0.04 + c * 0.01;
 
             return (
               <div
                 key={cell.id}
                 className={`
-                  relative rounded-xl bg-cell-bg flex items-center justify-center cursor-pointer
+                  relative rounded-lg bg-cell-bg flex items-center justify-center cursor-pointer
                   transition-all duration-200
-                  ${isSelected ? "ring-3 ring-primary animate-pulse-glow scale-110 z-10" : ""}
+                  ${isSelected ? "ring-2 ring-primary animate-pulse-glow scale-110 z-10" : ""}
                   ${isInvalid ? "animate-shake" : ""}
                   ${cell.matched ? "scale-0 opacity-0" : ""}
+                  ${hinted ? "animate-hint-blink" : ""}
                 `}
                 style={{
                   width: cellSize,
@@ -112,7 +133,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   transform: transform || undefined,
                   transition: swapping ? "transform 0.25s ease" : cell.matched ? "all 0.3s ease" : "all 0.2s ease",
                   animation: cell.isNew && cell.fallDistance > 0
-                    ? `pop-in 0.3s ease-out ${cell.fallDistance * 0.05}s both`
+                    ? `cascade-in 0.35s ease-out ${cascadeDelay}s both`
+                    : hinted
+                    ? "hint-blink 1.2s ease-in-out infinite"
                     : undefined,
                 }}
                 onTouchStart={(e) => handleTouchStart(r, c, e)}
@@ -124,9 +147,9 @@ const GameBoard: React.FC<GameBoardProps> = ({
                   alt=""
                   className="pointer-events-none select-none"
                   style={{
-                    width: cellSize - 6,
-                    height: cellSize - 6,
-                    borderRadius: "25%",
+                    width: cellSize - 4,
+                    height: cellSize - 4,
+                    borderRadius: "20%",
                     objectFit: "cover",
                   }}
                   draggable={false}

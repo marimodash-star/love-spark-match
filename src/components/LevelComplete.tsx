@@ -72,34 +72,27 @@ const LevelComplete: React.FC<LevelCompleteProps> = ({ level, message, onNext, i
         />
       ))}
 
-      <div className="animate-bounce-in bg-card rounded-3xl p-8 mx-4 max-w-sm text-center shadow-2xl border-2 border-primary/30 relative z-10">
-        <SparkleHeartIcon className="mx-auto mb-4" size={48} />
-        <h2 className="font-display text-2xl text-primary mb-4">Уровень {level} пройден!</h2>
+      <div className="animate-bounce-in bg-card rounded-3xl p-6 mx-4 max-w-sm text-center shadow-2xl border-2 border-primary/30 relative z-10">
+        <SparkleHeartIcon className="mx-auto mb-3" size={40} />
+        <h2 className="font-display text-xl text-primary mb-3">Уровень {level} пройден!</h2>
         
         {showCat ? (
           <img
             src={getCatImage(level)}
             alt="Милый котик"
-            className="w-48 h-48 object-contain mx-auto mb-4 rounded-2xl"
+            className="w-44 h-44 object-contain mx-auto mb-4 rounded-2xl"
           />
         ) : (
-          <p className="text-lg text-foreground leading-relaxed mb-6 font-semibold">
+          <p className="text-base text-foreground leading-relaxed mb-4 font-semibold">
             {message}
           </p>
         )}
 
         <button
           onClick={onNext}
-          className="bg-gradient-to-r from-primary to-celebration text-primary-foreground font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:scale-105 active:scale-95 transition-transform inline-flex items-center gap-2"
+          className="bg-gradient-to-r from-primary to-celebration text-primary-foreground font-bold py-2.5 px-6 rounded-full text-base shadow-lg hover:scale-105 active:scale-95 transition-transform"
         >
-          {isLast ? (
-            <>
-              <FloatingHeart color="currentColor" size={18} />
-              Начать влюбляться заново
-            </>
-          ) : (
-            "Следующий уровень →"
-          )}
+          {isLast ? "Начать заново" : "Дальше"}
         </button>
       </div>
     </div>

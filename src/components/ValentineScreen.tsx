@@ -46,25 +46,24 @@ const ValentineScreen: React.FC<ValentineScreenProps> = ({ onRestart }) => {
         />
       ))}
 
-      <div className={`transition-all duration-1000 ${visible ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}>
+      <div className={`transition-all duration-1000 px-4 ${visible ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}>
         <img
           src="/images/valentine.webp"
           alt="Valentine"
-          className="w-72 h-72 object-contain mx-auto mb-6 drop-shadow-2xl"
+          className="w-56 h-56 object-contain mx-auto mb-4 drop-shadow-2xl"
         />
-        <h1 className="font-display text-3xl text-primary text-center mb-4 inline-flex items-center gap-2 justify-center w-full">
-          Ты прошла все 25 уровней! <HeartIcon size={28} color="hsl(340, 75%, 60%)" />
+        <h1 className="font-display text-2xl text-primary text-center mb-3">
+          Ты прошла все 25 уровней!
         </h1>
-        <p className="text-center text-foreground text-lg mb-8 px-4 font-semibold">
+        <p className="text-center text-foreground text-base mb-6 font-semibold">
           Каждый уровень — как день с тобой: полон радости и любви
         </p>
         <div className="text-center">
           <button
             onClick={onRestart}
-            className="bg-gradient-to-r from-primary to-celebration text-primary-foreground font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:scale-105 active:scale-95 transition-transform inline-flex items-center gap-2"
+            className="bg-gradient-to-r from-primary to-celebration text-primary-foreground font-bold py-2.5 px-6 rounded-full text-base shadow-lg hover:scale-105 active:scale-95 transition-transform"
           >
-            <HeartIcon size={18} color="currentColor" />
-            Начать влюбляться заново
+            Начать заново
           </button>
         </div>
       </div>
